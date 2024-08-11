@@ -3,56 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TEKNOLOJİ RADARI </title>
+    <title>TEKNOLOJİ RADARI</title>
     <script src="https://d3js.org/d3.v4.min.js"></script>
-<script src="http://zalando.github.io/tech-radar/release/radar-0.8.js"></script>
+    <script src="http://zalando.github.io/tech-radar/release/radar-0.8.js"></script>
 </head>
 <body>
     <svg id="radar"></svg>
-    <script>
-        radar_visualization({
-        repo_url: "https://github.com/zalando/tech-radar",
-        svg_id: "radar",
-        width: 1450,
-        height: 1000,
-        scale: 1.0,
-        colors: {
-          background: "#fff",
-          grid: "#bbb",
-          inactive: "#ddd"
-        },
-        // Some font families might lead to font size issues
-        // Arial, Helvetica, or Source Sans Pro seem to work well though
-        font_family: "Arial, Helvetica",
-        title: "My Radar",
-        quadrants: [
-          { name: "Bottom Right" },
-          { name: "Bottom Left" },
-          { name: "Top Left" },
-          { name: "Top Right" }
-        ],
-        rings: [
-          { name: "INNER",  color: "#5ba300" },
-          { name: "SECOND", color: "#009eb0" },
-          { name: "THIRD",  color: "#c7ba00" },
-          { name: "OUTER",  color: "#e09b96" }
-        ],
-        print_layout: true,
-        links_in_new_tabs: true,
-        entries: [
-         {
-            label: "Some Entry",
-            quadrant: 3,          // 0,1,2,3 (counting clockwise, starting from bottom right)
-            ring: 2,              // 0,1,2,3 (starting from inside)
-            moved: -1             // -1 = moved out (triangle pointing down)
-                                  //  0 = not moved (circle)
-                                  //  1 = moved in  (triangle pointing up)
-                                  //  2 = new       (star)
-         },
-          // ...
-        ]
-      });
-    </script>
     
+    <script>
+        function fetchRadarEntries() {
+            return fetch('/api/radar-entries/')
+                .then(response => response.json())
+                .catch(error => {
+                    console.error('Error fetching radar entries:', error);
+                    return [];
+                });
+        }
+
+        fetchRadarEntries().then(radar_entries => {
+            radar_visualization({
+                repo_url: "https://github.com/zalando/tech-radar",
+                svg_id: "radar",
+                width: 1450,
+                height: 1000,
+                scale: 1.0,
+                colors: {
+                    background: "#fff",
+                    grid: "#bbb",
+                    inactive: "#ddd"
+                },
+                font_family: "Arial, Helvetica",
+                title: "My Radar",
+                quadrants: [
+                    { name: "Bottom Right" },
+                    { name: "Bottom Left" },
+                    { name: "Top Left" },
+                    { name: "Top Right" }
+                ],
+                rings: [
+                    { name: "INNER",  color: "#5ba300" },
+                    { name: "SECOND", color: "#009eb0" },
+                    { name: "THIRD",  color: "#c7ba00" },
+                    { name: "OUTER",  color: "#e09b96" }
+                ],
+                print_layout: true,
+                links_in_new_tabs: true,
+                entries: radar_entries
+            });
+        });
+    </script>
 </body>
 </html>

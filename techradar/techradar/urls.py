@@ -18,8 +18,15 @@ from django.contrib import admin
 from django.urls import path,include
 from techradar import views
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-   path('',views.home, name='home'),
+    path('',views.radar_view, name='radar'),
+    path('radar-data/',views.radar_view, name='radar_data'),
+    path('api/radar-entries/', views.radar_entries_view, name='radar-entries'),
+
+
+
+
 
 ]
