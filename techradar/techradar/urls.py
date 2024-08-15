@@ -24,8 +24,7 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',views.radar_view, name='radar'),
-    path('radar-data/',views.radar_view, name='radar_data'),
-    path('api/radar-entries/', views.radar_entries_view, name='radar-entries'),
+    path('radar-data/',views.radar_entries_view, name='radar_data'),
     ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 

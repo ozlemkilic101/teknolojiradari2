@@ -1,4 +1,4 @@
-{%load static%}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,52 +8,74 @@
   <meta name="keywords" content="{% block page_keywords %}{% endblock %}">
 
   <title>Radar</title>
-  <link rel="stylesheet" type="text/css" href="/static/css/radar.css">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/radar.css' %}">
   <script type="text/javascript" charset="utf-8" src="{% static 'js/radar.js' %}"></script>
   <script src="https://d3js.org/d3.v7.min.js"></script>
-
-
-
-  
 </head>
 <body>
   <svg id="radar"></svg>
   <script>
+    // Config.json'dan veri al
     fetch('/static/config.json')
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok ' + response.statusText);
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('JSON data:', data);  // JSON verilerini konsola yazdırır
-        // Burada radar_visualization veya diğer işlemler için data'yı kullanabilirsiniz
-    })
-    .catch(error => console.error('Error loading JSON:', error));
-    if (typeof radar_visualization !== 'undefined') {
-      fetch('/static/config.json').then(response => response.json()).then(data => {
-        radar_visualization({
-          title: "Radar",
-          date: data.date,
-          quadrants: [
-            { name: "Languages" },
-            { name: "Infrastructure" },
-            { name: "Datastores" },
-            { name: "Data Management" },
-          ],
-          rings: [
-            { name: "ADOPT", color: "#5ba300" },
-            { name: "TRIAL", color: "#009eb0" },
-            { name: "ASSESS", color: "#c7ba00" },
-            { name: "HOLD", color: "#e09b96" }
-          ],
-          entries: data.entries
-        });
-      }).catch(err => console.error('Error loading config.json', err));
-    } else {
-      console.error('radar_visualization is not defined');
-    }
+      .then(response => {
+          if (!response.ok) {
+              throw new Error('Network response was not ok ' + response.statusText);
+          }
+          return response.json();
+      })
+      .then(configData => {
+          console.log('Config JSON data:', configData);
+
+          // Admin panel verilerini al
+          fetch('/radar-data')  // Admin panelden verileri aldığınız URL
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(adminData => {
+                console.log('Admin panel data:', adminData);
+
+                // Birleştirilmiş verileri oluştur
+                const combinedEntries = configData.entries.map(entry => ({
+                    label: entry.label,
+                    quadrant: entry.quadrant,
+                    ring: entry.ring,
+                    moved: entry.moved
+                })).concat(adminData.map(item => ({
+                    label: item.label,
+                    quadrant: item.quadrant,
+                    ring: item.ring,
+                    moved: item.moved
+                })));
+
+                // Verileri radar_visualization fonksiyonuna iletin
+                if (typeof radar_visualization !== 'undefined') {
+                    radar_visualization({
+                        title: "Radar",
+                        date: configData.date,
+                        quadrants: [
+                            { name: "Languages" },
+                            { name: "Infrastructure" },
+                            { name: "Datastores" },
+                            { name: "Data Management" },
+                        ],
+                        rings: [
+                            { name: "ADOPT", color: "#5ba300" },
+                            { name: "TRIAL", color: "#009eb0" },
+                            { name: "ASSESS", color: "#c7ba00" },
+                            { name: "HOLD", color: "#e09b96" }
+                        ],
+                        entries: combinedEntries
+                    });
+                } else {
+                    console.error('radar_visualization is not defined');
+                }
+            })
+            .catch(error => console.error('Error loading admin panel data:', error));
+      })
+      .catch(error => console.error('Error loading config.json:', error));
   </script>
 </body>
 </html>
