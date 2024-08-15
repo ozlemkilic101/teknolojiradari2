@@ -1,0 +1,23 @@
+{
+  "date": "2024-08-15",
+  "entries": [
+    {
+      "label": "Example 1",
+      "quadrant": 0,
+      "ring": 2,
+      "moved": 0,
+      "link": "/some/link",
+      "radial_min": 50,
+      "radial_max": 100
+    },
+    {
+      "label": "Example 2",
+      "quadrant": 1,
+      "ring": 1,
+      "moved": 1,
+      "link": "/another/link",
+      "radial_min": 20,
+      "radial_max": 80
+    }
+  ]
+}

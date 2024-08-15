@@ -1,0 +1,59 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="{% block page_description %}{% endblock %}">
+  <meta name="keywords" content="{% block page_keywords %}{% endblock %}">
+
+  <title>Radar</title>
+  <link rel="stylesheet" type="text/css" href="/static/css/radar.css">
+  <script type="text/javascript" charset="utf-8" src="{% static 'js/radar.js' %}"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+
+
+
+  
+</head>
+<body>
+  <svg id="radar"></svg>
+  <script>
+    fetch('/static/config.json')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('JSON data:', data);  // JSON verilerini konsola yazdırır
+        // Burada radar_visualization veya diğer işlemler için data'yı kullanabilirsiniz
+    })
+    .catch(error => console.error('Error loading JSON:', error));
+    if (typeof radar_visualization !== 'undefined') {
+      fetch('/static/config.json').then(response => response.json()).then(data => {
+        radar_visualization({
+          title: "Radar",
+          date: data.date,
+          quadrants: [
+            { name: "Languages" },
+            { name: "Infrastructure" },
+            { name: "Datastores" },
+            { name: "Data Management" },
+          ],
+          rings: [
+            { name: "ADOPT", color: "#5ba300" },
+            { name: "TRIAL", color: "#009eb0" },
+            { name: "ASSESS", color: "#c7ba00" },
+            { name: "HOLD", color: "#e09b96" }
+          ],
+          entries: data.entries
+        });
+      }).catch(err => console.error('Error loading config.json', err));
+    } else {
+      console.error('radar_visualization is not defined');
+    }
+  </script>
+</body>
+</html>

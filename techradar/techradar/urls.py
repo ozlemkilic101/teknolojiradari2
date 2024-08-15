@@ -17,6 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from techradar import views
+from django.conf.urls.static import static
+from django.conf import settings
 
 
 urlpatterns = [
@@ -24,9 +26,6 @@ urlpatterns = [
     path('',views.radar_view, name='radar'),
     path('radar-data/',views.radar_view, name='radar_data'),
     path('api/radar-entries/', views.radar_entries_view, name='radar-entries'),
+    ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 
-
-
-
-]
